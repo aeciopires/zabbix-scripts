@@ -2,7 +2,7 @@ FROM python:3.11.1-slim
 
 LABEL maintainer="Aecio Pires" \
       date_create="17/01/2023" \
-      version="0.1.0" \
+      version="0.1.1" \
       description="Zabbix scripts" \
       licensce="GPLv3"
 

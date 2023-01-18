@@ -10,14 +10,14 @@
 # Example:
 #   python updateZabbixServerHostInterface
 #
-# To access Zabbix API create the follow environment variables:
+# To access Zabbix API create the follow environment variables (change the values ​​as needed):
 #
 # export ZABBIX_WEB_URL="http://localhost:8888"
 # export ZABBIX_WEB_LOGIN="Admin"
 # export ZABBIX_WEB_PASS="zabbix"
 # export ZABBIX_AGENT_ADDRESS="zabbix-zabbix-agent.monitoring.svc.cluster.local"
 #
-# PS.: Developed and tested using Python 3.8.10 and Zabbix 6.2.6
+# PS.: Developed and tested using Python (3.8.10 and 3.11.1) and Zabbix (6.0.12 and 6.2.6)
 #
 #+------------------------------------------------------------------------------+
 
@@ -35,14 +35,15 @@
 from zabbix_api import ZabbixAPI
 import os, sys
 
+
 #------------------------
 # Variables
 #------------------------
 ENABLE_DEBUG         = True
-ZABBIX_WEB_URL       = os.getenv('ZABBIX_WEB_URL', 'http://localhost:8888')
-ZABBIX_WEB_LOGIN     = os.getenv('ZABBIX_WEB_LOGIN', 'Admin')
-ZABBIX_WEB_PASS      = os.getenv('ZABBIX_WEB_PASS', 'zabbix')
-ZABBIX_AGENT_ADDRESS = os.getenv('ZABBIX_AGENT_ADDRESS', 'zabbix-zabbix-agent.monitoring.svc.cluster.local')
+ZABBIX_WEB_URL       = os.getenv('ZABBIX_WEB_URL')
+ZABBIX_WEB_LOGIN     = os.getenv('ZABBIX_WEB_LOGIN')
+ZABBIX_WEB_PASS      = os.getenv('ZABBIX_WEB_PASS')
+ZABBIX_AGENT_ADDRESS = os.getenv('ZABBIX_AGENT_ADDRESS')
 
 
 #------------------------
@@ -51,12 +52,15 @@ ZABBIX_AGENT_ADDRESS = os.getenv('ZABBIX_AGENT_ADDRESS', 'zabbix-zabbix-agent.mo
 #------------------------
 #------------------------
 
+# Required environment variables
 MANDATORY_ENV_VARS = ['ZABBIX_WEB_URL', 'ZABBIX_WEB_LOGIN', 'ZABBIX_WEB_PASS', 'ZABBIX_AGENT_ADDRESS']
 
+# Checking if required environment variables exist
 for var in MANDATORY_ENV_VARS:
     if var not in os.environ:
         raise EnvironmentError("[ERROR] Failed because the enviroment variable {} is not set.".format(var))
 
+# Displaying the value of required environment variables
 if ENABLE_DEBUG:
     print('\n [DEBUG] ', sys.version)
     print(
@@ -66,7 +70,7 @@ if ENABLE_DEBUG:
         '\n ZABBIX_AGENT_ADDRESS: ', ZABBIX_AGENT_ADDRESS,
     )
 
-# Accessing the Zabbix API
+# Accessing Zabbix API
 zapi = ZabbixAPI(server=ZABBIX_WEB_URL, timeout=120)
 zapi.login(ZABBIX_WEB_LOGIN,ZABBIX_WEB_PASS)
 
@@ -80,8 +84,7 @@ hosts = zapi.host.get({
     }
 })
 
-
-# Getting hostid of Zabbix Server
+# Getting hostid from Zabbix Server
 if ENABLE_DEBUG:
     print(
         '\n [DEBUG] Informations of Zabbix Server', hosts
@@ -94,11 +97,7 @@ if ENABLE_DEBUG:
         '\n INTERFACEID', hosts[0]["interfaces"][0]["interfaceid"]
     )
 
-    #for x_hosts in hosts:
-    #    print(x_hosts["hostid"])
-
-
-# Updating IP address of interface of Zabbix Server host
+# Updating Zabbix Server host interface IP address
 hosts = zapi.host.update({
     "hostid": hosts[0]["hostid"],
     "status": 0,
@@ -115,6 +114,5 @@ hosts = zapi.host.update({
     ]
 })
 
-
-# Logout of Zabbix API
-#zapi.user.logout()
+# Logout Zabbix API
+zapi.logout()

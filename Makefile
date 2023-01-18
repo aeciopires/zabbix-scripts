@@ -8,7 +8,7 @@ PATH_DOCKERFILE="./Dockerfile"
 SHELL=/bin/bash
 
 # Change the value according to new releases
-VERSION="v0.1.0"
+VERSION="v0.1.1"
 
 # Change the value as needed
 APP_NAME="zabbix-scripts"
